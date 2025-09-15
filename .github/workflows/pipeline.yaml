@@ -26,7 +26,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: frontend-dist
-          path: Angular/dist/
+          path: Angular/dist/crudtuto-Front  # match Dockerfile COPY
 
   build_backend:
     runs-on: ubuntu-latest
@@ -45,7 +45,7 @@ jobs:
           --health-retries=5
 
     env:
-      SPRING_DATASOURCE_URL: jdbc:mysql://localhost:3306/internhub
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/internhub
       SPRING_DATASOURCE_USERNAME: root
       SPRING_DATASOURCE_PASSWORD: root
 
@@ -67,7 +67,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: backend-jar
-          path: Spring/target/*.jar
+          path: Spring/target/*.jar  # match Dockerfile COPY
 
   docker_frontend:
     needs: build_frontend
@@ -80,7 +80,7 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: frontend-dist
-          path: frontend/dist
+          path: Angular/dist/crudtuto-Front  # match Dockerfile COPY
 
       - name: Log in to Docker Hub
         uses: docker/login-action@v3
@@ -91,8 +91,8 @@ jobs:
       - name: Build and Push Angular Docker Image
         uses: docker/build-push-action@v5
         with:
-          context: ./frontend
-          file: ./frontend/Dockerfile
+          context: ./Angular
+          file: ./Angular/Dockerfile
           push: true
           tags: ${{ secrets.DOCKER_USERNAME }}/frontend-app:latest
 
@@ -107,7 +107,7 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: backend-jar
-          path: backend/target
+          path: backend/target  # match Dockerfile COPY
 
       - name: Log in to Docker Hub
         uses: docker/login-action@v3
@@ -118,8 +118,8 @@ jobs:
       - name: Build and Push Spring Boot Docker Image
         uses: docker/build-push-action@v5
         with:
-          context: ./backend
-          file: ./backend/Dockerfile
+          context: ./Spring
+          file: ./Spring/Dockerfile
           push: true
           tags: ${{ secrets.DOCKER_USERNAME }}/backend-app:latest
 
