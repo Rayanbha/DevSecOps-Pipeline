@@ -17,7 +17,7 @@ jobs:
           node-version: '20'
 
       - name: Install and build Angular app
-        working-directory: frontend
+        working-directory: Angular
         run: |
           npm ci
           npm run build
@@ -60,7 +60,7 @@ jobs:
           java-version: '17'
 
       - name: Build Spring Boot app
-        working-directory: backend
+        working-directory: Spring
         run: mvn clean package
 
       - name: Upload backend JAR
