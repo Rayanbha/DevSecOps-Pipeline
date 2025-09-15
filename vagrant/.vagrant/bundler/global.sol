@@ -1,0 +1,1 @@
+{"dependencies":[["vagrant-disksize",["= 0.1.3"]],["vagrant-vmware-desktop",["= 3.0.5"]]],"checksum":"62c5898f23c53261d3e60e355e4cbab555e608c878e26860fd861cfe5f4e8bfc","vagrant_version":"2.4.7"}

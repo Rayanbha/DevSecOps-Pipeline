@@ -1,0 +1,63 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: node-alerts
+  labels:
+    prometheus: example-rules
+    role: alert-rules
+spec:
+  groups:
+    - name: node_alerts
+      rules:
+
+      - alert: NodeDown
+        expr: up{job="node-exporter"} == 0
+        for: 5m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Node {{ $labels.instance }} is down"
+          description: "Node {{ $labels.instance }} has been unreachable for more than 5 minutes."
+          type: Node
+
+      - alert: NodeHighCPUUsage
+        expr: 100 - (avg by(instance) (rate(node_cpu_seconds_total{mode="idle"}[5m])) * 100) > 80
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Node {{ $labels.instance }} has high CPU usage"
+          description: "CPU usage on node {{ $labels.instance }} is above 80% for more than 5 minutes."
+          type: CPU
+
+      - alert: NodeHighMemoryUsage
+        expr: (1 - (node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes)) * 100 > 80
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Node {{ $labels.instance }} has high memory usage"
+          description: "Memory usage on node {{ $labels.instance }} is above 80% for more than 5 minutes."
+          type: Memory
+
+      - alert: NodeFilesystemAlmostFull
+        expr: (node_filesystem_avail_bytes{job="node-exporter",fstype=~"ext4|xfs|btrfs|zfs"}
+              / node_filesystem_size_bytes{job="node-exporter",fstype=~"ext4|xfs|btrfs|zfs"}) * 100 < 10
+        for: 15m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Filesystem on node {{ $labels.instance }} is almost full"
+          description: "Less than 10% free space left on filesystem {{ $labels.mountpoint }} of node {{ $labels.instance }}."
+          type: Filesystem
+
+      - alert: NodeHighDiskReadWrite
+        expr: (sum by (instance) (rate(node_disk_read_bytes_total[5m])) > 10 * 1024 * 1024)
+           or (sum by (instance) (rate(node_disk_write_bytes_total[5m])) > 10 * 1024 * 1024)
+        for: 10m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Node {{ $labels.instance }} is experiencing high disk I/O"
+          description: "Disk I/O on node {{ $labels.instance }} exceeded 10MB/s for more than 10 minutes."
+          type: Disk

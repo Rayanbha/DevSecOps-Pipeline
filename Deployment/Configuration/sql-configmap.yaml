@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: mysql-initdb-config
+data:
+  init-user.sql: |
+    CREATE USER IF NOT EXISTS 'PUT HERE YOUR USER NAME'@'%' IDENTIFIED BY 'PUT HERE YOUR USER PASSWORD';
+    GRANT ALL PRIVILEGES ON 'PUT HERE THE NAME OF YOUR DATABASE'.* TO 'PUT HERE YOUR USER NAME'@'%';
+    FLUSH PRIVILEGES;
