@@ -107,7 +107,7 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: backend-jar
-          path: backend/target  # match Dockerfile COPY
+          path: Spring/target  # match Dockerfile COPY
 
       - name: Log in to Docker Hub
         uses: docker/login-action@v3
